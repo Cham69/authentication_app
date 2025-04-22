@@ -15,6 +15,10 @@ $router->map('GET', '/signup', function() {
     require 'views/signup.php';
 });
 
+$router->map('GET', '/signin', function() {
+    require 'views/signin.php';
+});
+
 $router->map('POST', '/user/store', function() {
     require 'controllers/UserController.php';
     $user = new UserController();

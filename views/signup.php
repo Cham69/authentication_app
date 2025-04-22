@@ -1,24 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" 
-        rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" 
-        crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <link rel="stylesheet" href="./styles/style.css">
-    <title>Authentication App</title>
-</head>
-<body class="d-flex flex-column min-vh-100">
-    <?php 
-        require_once('./components/navbar.php');
-    ?>
+<?php 
+    require_once('./components/navbar.php');
+?>
     <section class="container row mx-auto card my-5 py-3" style="max-width:60%">
         <div class="row">
             <div class="col-md-6 ">
-                <img src="./images/hero.png" alt="signup image" width="80%" class="mb-2">
+                <div class="text-center">
+                    <img src="./images/sign_in.png" alt="signup image" width="60%" class="text-center">
+                </div>
                 <div id="passwordPolicy" class="passwordPolicy">
                     <i class="bi bi-key-fill large-icons text-success"></i> Choose a Password : <br>
                     <ul>
@@ -61,7 +49,7 @@
                         </div>
                         <button type="submit" class="btn btn-primary w-100" id="signupBtn">Sign Up<span class="spinner-border-sm ms-2" id="signup-spinner" aria-hidden="true"></span></button>
                         <span class="text-xs text-danger backendErr" id="backendErr"></span>
-                        <p class="text-sm mt-2">Already have an account? <a href="#">Sign in</a></p>
+                        <p class="text-sm mt-2">Already have an account? <a href="/authentication_app/signin">Sign in</a></p>
                     </form>
                 </div>  
             </div>
@@ -70,8 +58,4 @@
     <?php 
         require_once('./components/footer.php');
     ?>
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script src="./js/helper.js"></script>
-    <script src="./js/signup.js"></script>
-</body>
-</html>
+    
