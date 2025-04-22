@@ -14,7 +14,7 @@
 <body class="d-flex flex-column min-vh-100">
 <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
   <div class="container-fluid">
-    <a class="navbar-brand ms-3" href="#">Authentication App</a>
+    <a class="navbar-brand ms-3" href="/authentication_app/">Authentication App</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>

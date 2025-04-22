@@ -3,7 +3,8 @@ class User {
     private $db;
 
     public function __construct() {
-        $this->db = new PDO("mysql:host=localhost;dbname=authentication_app", "root", "");
+        require 'config/database.php';
+        $this->db = $conn;
     }
 
     public function store($firstName, $lastName, $email, $password, $otp) {
