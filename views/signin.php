@@ -2,7 +2,7 @@
     require_once('./components/navbar.php');
 ?>
     <section class="container my-5 py-3" style="max-width:60%">
-        <div class="row align-items-start">
+        <div class="row align-items-center">
             <div class="col-md-6">
                 <img src="./images/sign_in.png" alt="signup image" width="80%" class="mb-2">
             </div>

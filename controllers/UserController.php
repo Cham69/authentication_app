@@ -70,6 +70,13 @@ class UserController
             
             $user = new User();
 
+            $existingUser = $user->getUserByEmail($email);
+            if ($existingUser) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'This email is already taken! Try a different email or sign in instead', 'type' => 'email_taken', 'redirect_url' => '/authentication_app/signup']);
+                exit;
+            }
+
             $created = $user->store($firstName, $lastName, $email, $password, $otp);
 
             $statusCode = $created ? '201':'500';

@@ -38,4 +38,10 @@ class User {
     
         return true;
     }
+
+    public function getUserByEmail($email) {
+        $stmt = $this->db->prepare("SELECT * FROM au_users WHERE email = ?");
+        $stmt->execute([$email]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

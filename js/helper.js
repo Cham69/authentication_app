@@ -31,7 +31,9 @@ function callToast(message, type, url){
                 }
             }).showToast();
 
-            setTimeout(() => {
-                window.location.href = url;
-            }, 4000);
+            if(url !== undefined){
+                setTimeout(() => {
+                    window.location.href = url;
+                }, 4000);
+            }
 }

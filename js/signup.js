@@ -264,6 +264,8 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
                 document.getElementById('backendErr').innerText = response.message.errorMsg;
               }else if(response.type === 'registration_failed'){
                     callToast(response.message, 'failed');
+              }else if(response.type === 'email_taken'){
+                    callToast(response.message, 'failed');
               }
 
               spinner(signupSpinner, 'off');
