@@ -1,5 +1,8 @@
 <?php
 // index.php
+require 'core/SessionManager.php';
+SessionManager::start();
+
 date_default_timezone_set('Asia/Colombo');
 require 'vendor/autoload.php';
 
@@ -17,6 +20,14 @@ $router->map('GET', '/signup', function() {
 
 $router->map('GET', '/signin', function() {
     require 'views/signin.php';
+});
+
+$router->map('GET', '/dashboard', function() {
+    if (!SessionManager::isAuthenticated()) {
+        header('Location: /authentication_app/signin');
+        exit;
+    }
+    require 'views/dashboard.php';
 });
 
 $router->map('POST', '/user/store', function() {

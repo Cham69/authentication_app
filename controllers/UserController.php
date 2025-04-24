@@ -79,6 +79,10 @@ class UserController
 
             $created = $user->store($firstName, $lastName, $email, $password, $otp);
 
+            if($created){
+                SessionManager::login($email);
+            }
+
             $statusCode = $created ? '201':'500';
             http_response_code($statusCode);
 
@@ -86,7 +90,7 @@ class UserController
                 'success' => $created ? $created : 'false',
                 'message' => $created ? 'Registration successfull!' : 'Registration failed!',
                 'type' => $created ? 'registration_successful' : 'registration_failed! Please try again',
-                'redirect_url' => $created ? '/authentication_app': '/authentication_app/signup'
+                'redirect_url' => $created ? '/authentication_app/dashboard': '/authentication_app/signup'
             ]);
 
         }else{
