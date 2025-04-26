@@ -10,23 +10,24 @@
                 <div>
                     <h5 class="mb-4 topic-text poppins-medium">Sign In</h5>
                 </div>
-                <form id="signupForm">
+                <form id="signinForm">
                     <div class="mb-3">
                         <input type="text" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Email Address">
-                        <span class="text-xs text-danger inputErr" id="emailErr"></span>
                     </div>
                     <div class="mb-3 position-relative">
-                        <input type="password" class="form-control pe-5" id="password" placeholder="Password" oninput="validatePassword();">
+                        <input type="password" class="form-control pe-5" id="password" placeholder="Password">
                         <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer" id="passwordEye" onclick="passwordShowHide('password');"></i>
-                        <span class="text-xs text-danger inputErr" id="passwordErr"></span>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100" id="signupBtn">Sign Up<span class="spinner-border-sm ms-2" id="signup-spinner" aria-hidden="true"></span></button>
-                    <span class="text-xs text-danger backendErr" id="backendErr"></span>
+                    <span class="text text-danger backendErr" id="backendErr"></span>
+                    <button type="submit" class="btn btn-primary w-100" id="signinBtn">Sign In<span class="spinner-border-sm ms-2" id="signin-spinner" aria-hidden="true"></span></button>
                     <p class="text-sm mt-2">Don't have an account? <a href="/authentication_app/signup">Sign up</a></p>
+                    <a href="/authentication_app/forgotpassword">Forgot password?</a>
                 </form>
             </div>
         </div>
     </section>
+    
+    <script src="./js/signin.js"></script>
     <?php 
         require_once('./components/footer.php');
     ?>

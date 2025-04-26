@@ -81,6 +81,8 @@ class UserController
 
             if($created){
                 SessionManager::login($email);
+                SessionManager::set('first_name', $firstName);
+                SessionManager::set('last_name', $lastName);
             }
 
             $statusCode = $created ? '201':'500';
@@ -101,6 +103,42 @@ class UserController
             exit;
         }
 
+    }
+
+    public function authenticate()
+    {
+        header('Content-Type: application/json');
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        $email = trim($input['email']);
+        $password = $input['password'];
+
+        if (empty($email) || empty($password)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => '* All fields are required (backend)', 'type' => 'empty_fields']);
+            exit;
+        }
+
+        $user = new User();
+        $authenticatedUser = $user->authenticate($email, $password);
+
+        if ($authenticatedUser) {
+            SessionManager::login($authenticatedUser['email']);
+            SessionManager::set('first_name', $authenticatedUser['first_name']);
+            SessionManager::set('last_name', $authenticatedUser['last_name']);
+            http_response_code(200);
+            echo json_encode(['success' => true, 'message' => 'Authenticated successfully. You will be redirected to your dashboard!', 'redirect_url' => '/authentication_app/dashboard']);
+        } else {
+            http_response_code(401);
+            echo json_encode(['success' => false, 'message' => 'The email or password is incorrect', 'type' => 'invalid_credentials']);
+        }
+    }
+
+    public function logout()
+    {
+        SessionManager::logout();
+        header('Location: /authentication_app/signin');
+        exit;
     }
 
     public function validatePasswordInput(){

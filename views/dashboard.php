@@ -3,7 +3,7 @@
     ?>
     <section class="container">
         <div class="text-center mt-5">
-            <h2 class="poppins-extrabold hero-text text-primary">Hello <?php echo SessionManager::get('email'); ?></h2>
+            <h4 class="poppins-semibold">Welcome back <?php echo SessionManager::get('first_name'); ?></h4>
         </div>
     </section>
     <?php 

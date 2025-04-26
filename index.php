@@ -15,11 +15,21 @@ $router->map('GET', '/', function() {
 });
 
 $router->map('GET', '/signup', function() {
-    require 'views/signup.php';
+    if (!SessionManager::isAuthenticated()) {
+        require 'views/signup.php';
+        exit;
+    }
+    header('Location: /authentication_app/dashboard');
+    require 'views/dashboard.php';
 });
 
 $router->map('GET', '/signin', function() {
-    require 'views/signin.php';
+    if (!SessionManager::isAuthenticated()) {
+        require 'views/signin.php';
+        exit;
+    }
+    header('Location: /authentication_app/dashboard');
+    require 'views/dashboard.php';
 });
 
 $router->map('GET', '/dashboard', function() {
@@ -34,6 +44,18 @@ $router->map('POST', '/user/store', function() {
     require 'controllers/UserController.php';
     $user = new UserController();
     $user->store();
+});
+
+$router->map('POST', '/user/authenticate', function() {
+    require 'controllers/UserController.php';
+    $user = new UserController();
+    $user->authenticate();
+});
+
+$router->map('POST', '/logout', function() {
+    require 'controllers/UserController.php';
+    $user = new UserController();
+    $user->logout();
 });
 
 // Match current request

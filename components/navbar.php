@@ -20,8 +20,18 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav ms-auto">
+        <?php if(SessionManager::get('email')): ?>
+          <span class="navbar-text text-light me-3">Hello, <?php echo htmlspecialchars(SessionManager::get('first_name')); ?>!</span>
+          <a class="btn btn-outline-primary me-3" href="/authentication_app/dashboard">Dashboard <i class="bi bi-house"></i></a>
+          <form action="/authentication_app/logout" method="POST" class="d-inline">
+              <button type="submit" class="btn btn-outline-danger me-3">
+                  Logout <i class="bi bi-box-arrow-right"></i>
+              </button>
+          </form>
+        <?php else: ?>
         <a class="btn btn-outline-primary me-3" href="/authentication_app/signin">Sign In <i class="bi bi-box-arrow-in-right"></i></a>
         <a class="btn btn-outline-primary me-3" href="/authentication_app/signup">Sign Up <i class="bi bi-person-circle"></i></a>
+        <?php endif; ?>
       </div>
     </div>
   </div>

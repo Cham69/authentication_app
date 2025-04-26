@@ -35,9 +35,9 @@ class SessionManager
         session_destroy();
     }
 
-    public static function login($userId)
+    public static function login($email)
     {
-        self::set('email', $userId);
+        self::set('email', $email);
     }
 
     public static function logout()
