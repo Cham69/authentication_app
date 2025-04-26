@@ -47,6 +47,11 @@
                             <i class="bi bi-eye position-absolute top-50 end-0 translate-middle-y me-3 cursor-pointer" id="confirmPasswordEye" onclick="passwordShowHide('confirmPassword');"></i>
                             <span class="text-xs text-danger inputErr" id="confirmPasswordErr"></span>
                         </div>
+
+                        <!-- Google reCAPTCHA widget -->
+                        <div class="g-recaptcha mb-2" data-sitekey="6LejTiUrAAAAALYpVjJkfZh-2ZaY72isFvHDQRQG"></div>
+                        <span class="text-xs text-danger recaptchaErr" id="recaptchaErr"></span>
+
                         <button type="submit" class="btn btn-primary w-100" id="signupBtn">Sign Up<span class="spinner-border-sm ms-2" id="signup-spinner" aria-hidden="true"></span></button>
                         <span class="text-xs text-danger backendErr" id="backendErr"></span>
                         <p class="text-sm mt-2">Already have an account? <a href="/authentication_app/signin">Sign in</a></p>

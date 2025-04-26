@@ -155,18 +155,23 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
     const emailErr = document.getElementById('emailErr');
     const passwordErr = document.getElementById('passwordErr');
     const confirmPasswordErr = document.getElementById('confirmPasswordErr');
+    const backendErr = document.getElementById('backendErr');
+    const recaptchaErr = document.getElementById('recaptchaErr');
 
     firstNameErr.innerText = '';
     emailErr.innerText = '';
     passwordErr.innerText = '';
     confirmPasswordErr.innerText = '';
+    backendErr.innerText = '';
+    recaptchaErr.innerText = '';
 
     const data = {
         firstName: document.getElementById('firstName').value.trim(),
         lastName: document.getElementById('lastName').value.trim(),
         email: document.getElementById('email').value.trim(),
         password: document.getElementById('password').value,
-        confirmPassword: document.getElementById('confirmPassword').value
+        confirmPassword: document.getElementById('confirmPassword').value,
+        recaptcha_response: grecaptcha.getResponse()
     };
 
     if(data.firstName  === '' || data.email  === '' || data.password  === '' || data.confirmPassword  === ''){
@@ -208,6 +213,7 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
               callToast(response.message, 'success', response.redirect_url);
               spinner(signupSpinner, 'off');
           } else {
+              grecaptcha.reset();
               if(response.type === 'empty_fields'){
                 firstNameErr.innerText = response.message.firstNameErr;
                 emailErr.innerText = response.message.emailErr;
@@ -262,6 +268,9 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
                 }
 
                 document.getElementById('backendErr').innerText = response.message.errorMsg;
+              }else if(response.type === 'recaptcha_failed'){
+                    document.getElementById('recaptchaErr').innerText = response.message;
+                    //callToast(response.message, 'failed');
               }else if(response.type === 'registration_failed'){
                     callToast(response.message, 'failed');
               }else if(response.type === 'email_taken'){

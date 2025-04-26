@@ -77,6 +77,20 @@ class UserController
                 exit;
             }
 
+            // reCAPTCHA response from frontend
+            $recaptchaResponse = $input['recaptcha_response'] ?? null;
+            $secretKey = '6LejTiUrAAAAAKOVe5qeg0RrrQY51cLVTuE0zlYz';
+
+            // Verify reCAPTCHA with Google
+            $verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$recaptchaResponse");
+            $responseData = json_decode($verifyResponse);
+
+            if (!$responseData->success) {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'reCAPTCHA verification failed', 'type' => 'recaptcha_failed']);
+                exit;
+            }
+
             $created = $user->store($firstName, $lastName, $email, $password, $otp);
 
             if($created){
@@ -113,25 +127,41 @@ class UserController
         $email = trim($input['email']);
         $password = $input['password'];
 
+        // reCAPTCHA response from frontend
+        $recaptchaResponse = $input['recaptcha_response'] ?? null;
+        $secretKey = '6LejTiUrAAAAAKOVe5qeg0RrrQY51cLVTuE0zlYz';
+
+        // Verify reCAPTCHA with Google
+        $verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$recaptchaResponse");
+        $responseData = json_decode($verifyResponse);
+
         if (empty($email) || empty($password)) {
             http_response_code(400);
             echo json_encode(['success' => false, 'message' => '* All fields are required (backend)', 'type' => 'empty_fields']);
             exit;
         }
 
-        $user = new User();
-        $authenticatedUser = $user->authenticate($email, $password);
+        if ($responseData->success) {
+            $user = new User();
+            $authenticatedUser = $user->authenticate($email, $password);
 
-        if ($authenticatedUser) {
-            SessionManager::login($authenticatedUser['email']);
-            SessionManager::set('first_name', $authenticatedUser['first_name']);
-            SessionManager::set('last_name', $authenticatedUser['last_name']);
-            http_response_code(200);
-            echo json_encode(['success' => true, 'message' => 'Authenticated successfully. You will be redirected to your dashboard!', 'redirect_url' => '/authentication_app/dashboard']);
-        } else {
-            http_response_code(401);
-            echo json_encode(['success' => false, 'message' => 'The email or password is incorrect', 'type' => 'invalid_credentials']);
+            if ($authenticatedUser) {
+                SessionManager::login($authenticatedUser['email']);
+                SessionManager::set('first_name', $authenticatedUser['first_name']);
+                SessionManager::set('last_name', $authenticatedUser['last_name']);
+                http_response_code(200);
+                echo json_encode(['success' => true, 'message' => 'Authenticated successfully. You will be redirected to your dashboard!', 'redirect_url' => '/authentication_app/dashboard']);
+            } else {
+                http_response_code(401);
+                echo json_encode(['success' => false, 'message' => 'The email or password is incorrect', 'type' => 'invalid_credentials']);
+                exit;
+            }
+        }else{
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'reCAPTCHA verification failed', 'type' => 'recaptcha_failed']);
+            exit;
         }
+
     }
 
     public function logout()

@@ -9,14 +9,15 @@ document.getElementById('signinForm').addEventListener('submit', function (e) {
 
     const data = {
         email: document.getElementById('email').value.trim(),
-        password: document.getElementById('password').value
+        password: document.getElementById('password').value,
+        recaptcha_response: grecaptcha.getResponse()
     };
 
-    // if(data.email  === '' || data.password  === ''){
-    //     backendErr.innerText = '* All fields are required';
-    //     spinner(signinSpinner, 'off');
-    //     return;
-    // }
+    if(data.email  === '' || data.password  === ''){
+        backendErr.innerText = '* All fields are required';
+        spinner(signinSpinner, 'off');
+        return;
+    }
 
     fetch('/authentication_app/user/authenticate', {
         method: 'POST',
@@ -26,13 +27,12 @@ document.getElementById('signinForm').addEventListener('submit', function (e) {
         body: JSON.stringify(data)
     }).then(res => res.json())
       .then(response => {
+          spinner(signinSpinner, 'off');
           if (response.success) {
               callToast(response.message, 'success', response.redirect_url);
-              spinner(signinSpinner, 'off');
           } else {
-                backendErr.innerText = response.message;
-
-                spinner(signinSpinner, 'off');
+                grecaptcha.reset();
+                backendErr.innerText = response.message;   
           }
       }).catch(error => {
           backendErr.innerText = 'An error occurred. Please try again.' + error.message;
