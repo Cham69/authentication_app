@@ -87,7 +87,6 @@ class UserController
 
             // reCAPTCHA response from frontend
             $recaptchaResponse = $input['recaptcha_response'] ?? null;
-            //$secretKey = '6LejTiUrAAAAAKOVe5qeg0RrrQY51cLVTuE0zlYz';
             $secretKey = $this->secret_key;
 
             // Verify reCAPTCHA with Google
@@ -138,7 +137,7 @@ class UserController
 
         // reCAPTCHA response from frontend
         $recaptchaResponse = $input['recaptcha_response'] ?? null;
-        $secretKey = '6LejTiUrAAAAAKOVe5qeg0RrrQY51cLVTuE0zlYz';
+        $secretKey = $this->secret_key;
 
         // Verify reCAPTCHA with Google
         $verifyResponse = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=$secretKey&response=$recaptchaResponse");
