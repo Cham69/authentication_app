@@ -1,5 +1,6 @@
 <?php 
     require_once('./components/navbar.php');
+    require 'config/recaptcha.php';
 ?>
     <section class="container my-5 py-3" style="max-width:60%">
         <div class="row align-items-center">
@@ -20,7 +21,7 @@
                     </div>
 
                     <!-- Google reCAPTCHA widget -->
-                    <div class="g-recaptcha mb-2" data-sitekey="6LejTiUrAAAAALYpVjJkfZh-2ZaY72isFvHDQRQG"></div>
+                    <div class="g-recaptcha mb-2" data-sitekey="<?php echo htmlspecialchars($site_key); ?>"></div>
 
                     <span class="text text-danger text-xs backendErr" id="backendErr"></span>
                     <button type="submit" class="btn btn-primary w-100" id="signinBtn">Sign In<span class="spinner-border-sm ms-2" id="signin-spinner" aria-hidden="true"></span></button>

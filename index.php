@@ -1,5 +1,6 @@
 <?php
 // index.php
+
 require 'core/SessionManager.php';
 SessionManager::start();
 

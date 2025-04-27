@@ -1,5 +1,6 @@
 <?php 
     require_once('./components/navbar.php');
+    require 'config/recaptcha.php';
 ?>
     <section class="container row mx-auto card my-5 py-3" style="max-width:60%">
         <div class="row">
@@ -49,7 +50,7 @@
                         </div>
 
                         <!-- Google reCAPTCHA widget -->
-                        <div class="g-recaptcha mb-2" data-sitekey="6LejTiUrAAAAALYpVjJkfZh-2ZaY72isFvHDQRQG"></div>
+                        <div class="g-recaptcha mb-2" data-sitekey="<?php echo htmlspecialchars($site_key); ?>"></div>
                         <span class="text-xs text-danger recaptchaErr" id="recaptchaErr"></span>
 
                         <button type="submit" class="btn btn-primary w-100" id="signupBtn">Sign Up<span class="spinner-border-sm ms-2" id="signup-spinner" aria-hidden="true"></span></button>
