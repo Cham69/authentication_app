@@ -1,6 +1,9 @@
 <?php
 // controllers/UserController.php
 require_once 'models/User.php';
+require_once 'core/Mailer.php';
+require_once 'core/Helper.php';
+use Core\Helper;
 
 class UserController
 {
@@ -22,11 +25,6 @@ class UserController
         $email = trim($input['email']);
         $password = $input['password'];
         $confirmPassword = $input['confirmPassword'];
-
-        // if(!empty($email)){
-        //     echo json_encode(['success' => false, 'message' => 'This email is already taken! Try a different email or sign in instead']);
-        //     exit;
-        // }
 
         if (empty($firstName) || empty($email) || empty($password) || empty($confirmPassword)) {
 
@@ -74,7 +72,6 @@ class UserController
         $specialChars = !!preg_match('/[^A-Za-z0-9]/', $password);
 
         if($hasLowerCase && $hasUpperCase && $hasDigit && $passwordLength && $specialChars){
-            $otp = random_int(100000, 999999);
             
             $user = new User();
 
@@ -99,9 +96,17 @@ class UserController
                 exit;
             }
 
-            $created = $user->store($firstName, $lastName, $email, $password, $otp);
+            $created = $user->store($firstName, $lastName, $email, $password);
 
             if($created){
+
+                // $sendEmail = Helper::sendEmail($email, 'Verify Email Address', 'verifyEmail', [
+                //     'username' => 'Jayashan',
+                //     'loginLink' => 'https://yourapp.com/login'
+                // ]);
+
+                $newUser = $user->getUserByEmail($email);
+
                 SessionManager::login($email);
                 SessionManager::set('first_name', $firstName);
                 SessionManager::set('last_name', $lastName);
@@ -112,9 +117,10 @@ class UserController
 
             echo json_encode([
                 'success' => $created ? $created : 'false',
-                'message' => $created ? 'Registration successfull!' : 'Registration failed!',
+                'message' => $created ? 'Registration successful. Redirecting to email verification.' : 'Registration failed!',
                 'type' => $created ? 'registration_successful' : 'registration_failed! Please try again',
-                'redirect_url' => $created ? '/authentication_app/dashboard': '/authentication_app/signup'
+                'redirect_url' => $created ? '/authentication_app/email-verify': '/authentication_app/signup',
+                'newUser' => $newUser ? $newUser : null,
             ]);
 
         }else{
@@ -179,7 +185,103 @@ class UserController
         exit;
     }
 
-    public function validatePasswordInput(){
+    public function sendEmailVerification($type)
+    {
+        $user = new User();
+        $email = SessionManager::get('email');
+        $userData = $user->getUserByEmail($email);
+        if($type == 'pageLoad' && $userData['has_sent_code'] == 1){
+            return json_encode(['success' => false, 'message' => 'We have already sent a verification link to your email address. Please check your inbox.']);
+        }
+        $otp = random_int(100000, 999999);
+        $user->setOtp($email, $otp);
 
+        $userData = $user->getUserByEmail($email);
+
+        if ($userData) {
+            $emailData = [
+                'username' => $userData['first_name'],
+                'verification_code' => $userData['verification_code']
+            ];
+
+            $sendEmail = Helper::sendEmail($email, 'Verify Your Email', 'verifyEmail', $emailData);
+            if ($sendEmail) {
+                if($type == 'resend'){
+                    echo json_encode(['success' => true, 'message' => 'Resent verification code successfully. Please check your inbox.']);
+                }
+                return json_encode(['success' => true, 'message' => 'We have sent a verification link to your email address. Please check your inbox.']);
+            } else {
+                return json_encode(['success' => false, 'message' => 'Failed to send verification email.']);
+            }
+        }
+    }
+
+    public function verifyUser()
+    {
+        header('Content-Type: application/json');
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        $email = SessionManager::get('email');
+        $user = new User();
+        $userData = $user->getUserByEmail($email);
+        if ($userData) {
+            if ($userData['verification_code'] == $input['otp']) {
+                $verified = $user->verifyUser($email);
+                if (!$verified) {
+                    http_response_code(500);
+                    echo json_encode(['success' => false, 'message' => 'Failed to verify email. Please try again later.']);
+                    exit;
+                }
+                SessionManager::set('is_verified', 1);
+                http_response_code(200);
+                echo json_encode(['success' => true, 'message' => 'Email verified successfully. Redirecting to your dashboard!', 'redirect_url' => '/authentication_app/dashboard']);
+            } else {
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Invalid verification code. Please try again.', 'type' => 'invalid_code']);
+            }
+        } else {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'User not found.']);
+        }
+    }
+
+    public function sendResetPassword()
+    {
+        header('Content-Type: application/json');
+        $input = json_decode(file_get_contents('php://input'), true);
+        $email = trim($input['email']);
+
+        if (empty($email)) {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'Email is required', 'type' => 'empty_fields']);
+            exit;
+        }
+
+        $user = new User();
+        $userData = $user->getUserByEmail($email);
+
+        if ($userData) {
+            $otp = random_int(100000, 999999);
+            $resetToken = $userData['id'].'-'.$otp;
+            $expiryDate = date('Y-m-d H:i:s', strtotime('+1 minute'));    
+            $user->setResetToken($userData['id'], $email, $resetToken, $expiryDate);
+
+            $emailData = [
+                'username' => $userData['first_name'],
+                'reset_link' => $resetToken
+            ];
+
+            $sendEmail = Helper::sendEmail($email, 'Reset Your Password', 'resetPassword', $emailData);
+            if ($sendEmail) {
+                http_response_code(200);
+                echo json_encode(['success' => true, 'message' => 'Password reset link sent to your email address. Please check your inbox.']);
+            } else {
+                http_response_code(500);
+                echo json_encode(['success' => false, 'message' => 'Failed to send password reset email.']);
+            }
+        } else {
+            http_response_code(404);
+            echo json_encode(['success' => false, 'message' => 'User not found.']);
+        }
     }
 }

@@ -1,3 +1,4 @@
 /vendor
 /config/database.php
 /config/recaptcha.php
+/config/smtp.php

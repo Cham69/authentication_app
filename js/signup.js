@@ -156,6 +156,7 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
     const passwordErr = document.getElementById('passwordErr');
     const confirmPasswordErr = document.getElementById('confirmPasswordErr');
     const backendErr = document.getElementById('backendErr');
+    const backendSuccess = document.getElementById('backendSuccess');
     const recaptchaErr = document.getElementById('recaptchaErr');
 
     firstNameErr.innerText = '';
@@ -163,6 +164,7 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
     passwordErr.innerText = '';
     confirmPasswordErr.innerText = '';
     backendErr.innerText = '';
+    backendSuccess.innerText = '';
     recaptchaErr.innerText = '';
 
     const data = {
@@ -210,8 +212,11 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
     }).then(res => res.json())
       .then(response => {
           if (response.success) {
-              callToast(response.message, 'success', response.redirect_url);
+              //callToast(response.message, 'success', response.redirect_url);
               spinner(signupSpinner, 'off');
+              backendSuccess.innerText = response.message;
+              window.location.href = response.redirect_url;
+              
           } else {
               grecaptcha.reset();
               if(response.type === 'empty_fields'){
@@ -281,24 +286,3 @@ document.getElementById('signupForm').addEventListener('submit', function (e) {
           }
       });
 });
-
-//Input field color variation
-// function activateInputColors(element){
-//     const password = document.getElementById("password").value //Password field
-//     const confirmPassword = document.getElementById("confirmPassword").value //Confirm password field
-
-//     if(password === confirmPassword && password !== ''){
-//         element.style.outline = "2px solid #5dc566"
-//     }else{
-//         element.style.outline = "2px solid #ff8a8a"
-//     }
-    
-// }
-
-//Input field color variation
-// function removeInputOutline(element){
-//     const password = document.getElementById("password").value //Password field
-//     const confirmPassword = document.getElementById("confirmPassword").value //Confirm password field
-
-//     //element.style.outline = "none"
-// }

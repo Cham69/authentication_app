@@ -15,30 +15,78 @@ $router->map('GET', '/', function() {
     require 'views/home.php';
 });
 
+$router->map('GET', '/forgotpassword', function() {
+    require 'views/forgot-password.php';
+});
+
+$router->map('GET', '/reset-password', function() {
+    require 'views/reset-password.php';
+});
+
 $router->map('GET', '/signup', function() {
-    if (!SessionManager::isAuthenticated()) {
-        require 'views/signup.php';
+    // If the user is already authenticated, redirect to the dashboard
+    if (SessionManager::isAuthenticated()) {
+        header('Location: /authentication_app/dashboard');
         exit;
     }
-    header('Location: /authentication_app/dashboard');
-    require 'views/dashboard.php';
+
+    if (SessionManager::registeredOnly()) {
+        // If the user is already registered but not verified, redirect to the email verification page
+        header('Location: /authentication_app/email-verify');
+        exit;
+    }
+
+    require 'views/signup.php';
+
 });
 
 $router->map('GET', '/signin', function() {
-    if (!SessionManager::isAuthenticated()) {
-        require 'views/signin.php';
+    if (SessionManager::isAuthenticated()) {
+        header('Location: /authentication_app/dashboard');
         exit;
     }
-    header('Location: /authentication_app/dashboard');
-    require 'views/dashboard.php';
+
+    if (SessionManager::registeredOnly()) {
+        // If the user is already registered but not verified, redirect to the email verification page
+        header('Location: /authentication_app/email-verify');
+        exit;
+    }
+
+    require 'views/signin.php';
 });
 
-$router->map('GET', '/dashboard', function() {
-    if (!SessionManager::isAuthenticated()) {
+$router->map('GET', '/email-verify', function() {
+
+    if (!SessionManager::registeredOnly()) {
+        // If the user is already verified, redirect to the dashboard
+        if (SessionManager::isAuthenticated()) {
+            header('Location: /authentication_app/dashboard');
+            exit;
+        }
+
+        // If not authenticated, redirect to the sign-in page
         header('Location: /authentication_app/signin');
         exit;
     }
+
+    // If registered but not verified, show the email verification page
+    require 'views/email-verify.php';
+});
+
+$router->map('GET', '/dashboard', function() {
     require 'views/dashboard.php';
+    if (!SessionManager::isAuthenticated()) {
+
+        if (SessionManager::registeredOnly()) {
+            // If the user is already registered but not verified, redirect to the email verification page
+            header('Location: /authentication_app/email-verify');
+            exit;
+        }
+        
+        header('Location: /authentication_app/signin');
+        exit;
+    }
+
 });
 
 $router->map('POST', '/user/store', function() {
@@ -53,10 +101,28 @@ $router->map('POST', '/user/authenticate', function() {
     $user->authenticate();
 });
 
+$router->map('POST', '/user/verify', function() {
+    require 'controllers/UserController.php';
+    $user = new UserController();
+    $user->verifyUser();
+});
+
 $router->map('POST', '/logout', function() {
     require 'controllers/UserController.php';
     $user = new UserController();
     $user->logout();
+});
+
+$router->map('POST', '/user/resend', function() {
+    require 'controllers/UserController.php';
+    $user = new UserController();
+    $user->sendEmailVerification('resend');
+});
+
+$router->map('POST', '/reset-password', function() {
+    require 'controllers/UserController.php';
+    $user = new UserController();
+    $user->sendResetPassword();
 });
 
 // Match current request

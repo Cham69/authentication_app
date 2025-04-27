@@ -7,7 +7,7 @@ class User {
         $this->db = $conn;
     }
 
-    public function store($firstName, $lastName, $email, $password, $otp) {
+    public function store($firstName, $lastName, $email, $password) {
         $now = date('Y-m-d H:i:s');
         $expiryDate = new DateTime();
         $expiryDate->modify('+30 days');
@@ -16,13 +16,13 @@ class User {
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         $stmt = $this->db->prepare("
                     INSERT INTO au_users (
-                        first_name, last_name, email, password, verification_code, created_at, password_expiry_date
+                        first_name, last_name, email, password, created_at, password_expiry_date
                         ) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?)"
+                        VALUES (?, ?, ?, ?, ?, ?)"
                     );
         
         $success = $stmt->execute([
-            $firstName, $lastName, $email, $hashedPassword, $otp,
+            $firstName, $lastName, $email, $hashedPassword,
             $now, $expiryDate
         ]);
 
@@ -55,5 +55,21 @@ class User {
         }
 
         return false;
+    }
+
+    public function setOtp($email, $otp) {
+        $stmt = $this->db->prepare("UPDATE au_users SET verification_code = ?, has_sent_code = ? WHERE email = ?");
+        return $stmt->execute([$otp, 1, $email]);
+    }
+
+    public function verifyUser($email) {
+        $stmt = $this->db->prepare("UPDATE au_users SET status = 1 WHERE email = ?");
+        return $stmt->execute([$email]);
+    }
+
+    public function setResetToken($id, $email, $token, $expiryDate) {
+        $now = date('Y-m-d H:i:s');
+        $stmt = $this->db->prepare("INSERT INTO au_password_resets (user_id, token, expiry_at, sent_at) VALUES (?, ?, ?, ?) ");
+        return $stmt->execute([$id, $token, $expiryDate, $now]);
     }
 }

@@ -20,7 +20,7 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
       <div class="navbar-nav ms-auto">
-        <?php if(SessionManager::get('email')): ?>
+        <?php if(SessionManager::isAuthenticated()): ?>
           <span class="navbar-text text-light me-3">Hello, <?php echo htmlspecialchars(SessionManager::get('first_name')); ?>!</span>
           <a class="btn btn-outline-primary me-3" href="/authentication_app/dashboard">Dashboard <i class="bi bi-house"></i></a>
           <form action="/authentication_app/logout" method="POST" class="d-inline">

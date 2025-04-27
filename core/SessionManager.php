@@ -47,6 +47,11 @@ class SessionManager
 
     public static function isAuthenticated(): bool
     {
-        return self::has('email');
+        return self::has('email') && self::has('is_verified');
+    }
+
+    public static function registeredOnly(): bool
+    {
+        return self::has('email') && !self::has('is_verified');
     }
 }

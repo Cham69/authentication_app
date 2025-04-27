@@ -55,6 +55,7 @@
 
                         <button type="submit" class="btn btn-primary w-100" id="signupBtn">Sign Up<span class="spinner-border-sm ms-2" id="signup-spinner" aria-hidden="true"></span></button>
                         <span class="text-xs text-danger backendErr" id="backendErr"></span>
+                        <span class="text-success backendSuccess" id="backendSuccess"></span>
                         <p class="text-sm mt-2">Already have an account? <a href="/authentication_app/signin">Sign in</a></p>
                     </form>
                 </div>  
